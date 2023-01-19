@@ -14,6 +14,8 @@
                    formControlName="course">
             <span class="text-danger" *ngIf="(course?.touched || submitted) && course?.errors?.required"> Course is required
             </span>
+            <span class="text-danger" *ngIf="(course?.touched || submitted) && course?.errors?.minlength"> Course should  be at leat 4 chars
+            </span>
           </div>
           <div class="form-group">
             <label for="phone">Start Date : </label>

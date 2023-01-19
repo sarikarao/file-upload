@@ -37,12 +37,17 @@
             </span>
           </div>
           <div class="form-group">
+            <label> Has Attachment : </label>
+            <input type="checkbox" formControlName="hasAttachment"/>
+            <span class="text-danger" *ngIf="(hasAttachment?.touched || submitted) && hasAttachment?.errors?.required"> hasAttachment is required </span>
+          </div>
+          <div class="form-group" *ngIf="hasAttachment?.value===true">
             <label for="filecontrol">Certificate : </label>
             <input type="file"
                    name="file"
                    forControlName="file"
                    class="form-control"
-                   enctype="multipart/form-data" accept=".pdf,application/pdf" (change)="onFileChange($event)" />
+                   enctype="multipart/form-data" accept=".pdf,application/pdf" (change)="onFileChange($event)"/>
             <span class="text-danger" *ngIf="(fileSource?.touched || submitted) && fileSource?.errors?.required"> File is required </span>
           </div>
           <div class="text-center">

@@ -37,6 +37,7 @@ export class UploadComponent {
       startDate: [null, [Validators.required]],
       endDate: [null, [Validators.required, this.endDateValidator('startDate')]],
       university: ['', [Validators.required]],
+      hasAttachment: [null, []],
       file: [null,[]],
       fileSource: ['', [Validators.required]]
     });
@@ -64,6 +65,10 @@ export class UploadComponent {
 
   get fileSource() {
     return this.registerForm?.get("fileSource");
+  }
+
+  get hasAttachment() {
+    return this.registerForm?.get("hasAttachment");
   }
 
   onSubmit() : void{

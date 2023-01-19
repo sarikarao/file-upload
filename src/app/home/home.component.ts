@@ -55,6 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    this.submitted = true;
     if (this.registerForm?.valid) {
       const register: Register = {
         course: this.course?.value,
@@ -84,6 +85,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       const startDateControl = control.parent?.get(startDate)?.value ? moment(control.parent.get(startDate)?.value) : null;
       const endDateControl = control.value ? moment(control.value) : null;
+
+      console.log(control, startDateControl, endDateControl);
 
       return startDateControl && endDateControl && startDateControl.isAfter(endDateControl) ? {endDateLimit: true} : null;
     };
