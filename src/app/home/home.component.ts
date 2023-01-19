@@ -1,20 +1,32 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from "@angular/forms";
 import * as moment from "moment";
+import {PdfSaveService} from "../service/pdf-save.service";
+import {Register} from "../model/register";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   registerForm: FormGroup;
   submitted = false;
 
   userData: any;
-  value = "";
+  successSubmission = false;
+  errorSubmission = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private pdfSaveService: PdfSaveService) {
+  }
+
+  ngOnDestroy(): void {
+    this.clearForm();
+  }
+
+  clearForm(): void {
+    this.successSubmission = false;
+    this.errorSubmission = false;
   }
 
   ngOnInit() {
@@ -27,26 +39,42 @@ export class HomeComponent implements OnInit {
   }
 
   get course() {
-    return this.registerForm?.get("course")
+    return this.registerForm?.get("course");
   }
 
   get startDate() {
-    return this.registerForm?.get("startDate")
+    return this.registerForm?.get("startDate");
   }
 
   get endDate() {
-    return this.registerForm?.get("endDate")
+    return this.registerForm?.get("endDate");
   }
 
   get university() {
-    return this.registerForm?.get("university")
-  }
-
-  ngAfterViewInit() {
+    return this.registerForm?.get("university");
   }
 
   onSubmit() {
+    if (this.registerForm?.valid) {
+      const register: Register = {
+        course: this.course?.value,
+        startDate: moment(this.startDate?.value).format("MMDDYYYY"),
+        endDate: this.endDate?.value,
+        university: this.university?.value
+      };
+      console.log("Form in ")
+      this.pdfSaveService.saveToPdf(register).subscribe((response: any) => {
+        console.log("Received Response", response, response.response);
+        if (response?.response === "Success") {
+          console.log("Received Success Response", response);
+          this.successSubmission = true;
+        } else if (response?.response === "Failure") {
+          console.log("Received Failure Response", response);
+          this.errorSubmission = true;
+        }
 
+      });
+    }
   }
 
   endDateValidator(startDate: string): ValidatorFn {
@@ -54,10 +82,11 @@ export class HomeComponent implements OnInit {
       if (!control.parent) {
         return null;
       }
-      const startDateControl = control.parent?.get(startDate)?.value ? moment(control.parent.get(startDate)?.value, "") : null;
-      const endDateControl = control.value ? moment(control.value, "") : null;
+      const startDateControl = control.parent?.get(startDate)?.value ? moment(control.parent.get(startDate)?.value) : null;
+      const endDateControl = control.value ? moment(control.value) : null;
 
       return startDateControl && endDateControl && startDateControl.isAfter(endDateControl) ? {endDateLimit: true} : null;
     };
   }
+
 }

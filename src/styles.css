@@ -33,6 +33,11 @@ label{
   border-color: #d39e00;
   color: #fff;
 }
+
+.btn-space{
+  margin-left: 10px;
+}
+
 .simple-keyboard {
   max-width: 850px;
 }
